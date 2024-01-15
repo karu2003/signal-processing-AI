@@ -1,0 +1,9 @@
+numpy
+# netCDF4
+# pytest
+# typing-extensions
+scipy
+matplotlib
+# PyWavelets
+# scaleogram
+# line_profiler
