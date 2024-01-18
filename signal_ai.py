@@ -1,34 +1,52 @@
 import numpy as np
 import matplotlib.pyplot as plt
+# import redpitaya_scpi as scpi
+import redpctl as redpctl
 np.random.seed(42)
 
+
+rp_c = redpctl.RedCtl()
+nrows = 100
+data = rp_c.read(counter = nrows)
+
+timeseries = np.array(data)
+
+print(timeseries.shape[0])
+
+# for i in timeseries:
+#     plt.plot(i)
+# plt.show()
+
+# exit()
+
 # nrows = 10000
-nrows = 10
-nsteps = 5000
-timeseries = np.zeros((nrows, nsteps, 1))
-t = np.linspace(0, 30, num=nsteps)
-for i in range(nrows):
-    a = 2*(np.random.rand(11) - 0.5)
-    b = 2*(np.random.rand(11) - 0.5)
-    timeseries[i,:,0] = a[0]/2
-    for k in range(1, 11):
-        timeseries[i,:,0] += a[k] * np.cos(t*k)
-        timeseries[i,:,0] += b[k] * np.sin(t*k)
-    timeseries[i,:,0] = 2*timeseries[i,:,0]/np.max(np.abs(timeseries[i,:,0]))
+# nrows = 50
+# nsteps = 5000
+# timeseries = np.zeros((nrows, nsteps, 1))
+# t = np.linspace(0, 30, num=nsteps)
+# for i in range(nrows):
+#     a = 2*(np.random.rand(11) - 0.5)
+#     b = 2*(np.random.rand(11) - 0.5)
+#     timeseries[i,:,0] = a[0]/2
+#     for k in range(1, 11):
+#         timeseries[i,:,0] += a[k] * np.cos(t*k)
+#         timeseries[i,:,0] += b[k] * np.sin(t*k)
+#     timeseries[i,:,0] = 2*timeseries[i,:,0]/np.max(np.abs(timeseries[i,:,0]))
 
 Y = np.zeros(nrows)
-yTrue = np.random.choice(nrows, int(nrows*0.2), replace=False)
-Y[yTrue] = 1
-stoerung = np.array([0.1, 0.2, 0.4, 0.4, 0.3,0.4,0.4,0.2,0,0,0,0,0,0,0,0,
--0.1,-0.2,-0.4,-0.2,-0.2,-0.4,-0.2,-0.1] * 2)
-for i in yTrue:
-    xpos = np.random.randint(0, nsteps - len(stoerung))
-    timeseries[i, xpos:xpos+len(stoerung), 0] += stoerung
-plt.plot(timeseries[1])
-plt.show()
-exit()
-TrainSet = np.random.choice(timeseries.shape[0],
-int(timeseries.shape[0]*0.80), replace=False)
+# yTrue = np.random.choice(nrows, int(nrows*0.2), replace=False)
+# Y[yTrue] = 1
+# stoerung = np.array([0.1, 0.2, 0.4, 0.4, 0.3,0.4,0.4,0.2,0,0,0,0,0,0,0,0,
+# -0.1,-0.2,-0.4,-0.2,-0.2,-0.4,-0.2,-0.1] * 2)
+# for i in yTrue:
+#     xpos = np.random.randint(0, nsteps - len(stoerung))
+#     timeseries[i, xpos:xpos+len(stoerung), 0] += stoerung
+
+# plt.plot(timeseries[1])
+# plt.show()
+# exit()
+
+TrainSet = np.random.choice(timeseries.shape[0], int(timeseries.shape[0]*0.80), replace=False)
 XTrain = timeseries[TrainSet,:]
 YTrain = Y[TrainSet]
 TestSet = np.delete(np.arange(len(Y)), TrainSet)
@@ -85,9 +103,23 @@ def zwischenVerarbeitungPlotten(sigSingle, outLayer):
     plt.subplots_adjust(hspace=0.8)
     plt.show()
 
-firstY0 = np.flatnonzero(np.logical_not(YTest))[0]
-firstY1 = np.flatnonzero(YTest)[0]
+print(">>>>>>>>>>>>",np.logical_not(YTest))
+# firstY0 = np.flatnonzero(np.logical_not(YTest))[0]
+# firstY1 = np.flatnonzero(YTest)[0]
 yP = model.predict(XTest)
-print(yP[firstY0],yP[firstY1])
-zwischenVerarbeitungPlotten(XTest[firstY0,:], 0)
-zwischenVerarbeitungPlotten(XTest[firstY1,:], 0)
+print(yP)
+# print(yP[firstY0],yP[firstY1])
+plt.show()
+# zwischenVerarbeitungPlotten(XTest[firstY0,:], 0)
+# zwischenVerarbeitungPlotten(XTest[firstY1,:], 0)
+
+model.save("model_500.keras")
+
+# # Now, we can simply load without worrying about our custom objects.
+# reconstructed_model = keras.models.load_model("custom_model.keras")
+
+# # Let's check:
+# np.testing.assert_allclose(
+#     model.predict(test_input), reconstructed_model.predict(test_input)
+# )
+
