@@ -8,3 +8,5 @@ https://keras.io/examples/timeseries/timeseries_classification_from_scratch/
 
 https://stackoverflow.com/questions/57309958/one-class-classification-using-keras-and-python
 
+https://github.com/8-vishal/EEG-Signal-Classification
+
