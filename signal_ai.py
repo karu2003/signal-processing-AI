@@ -11,6 +11,10 @@ data = rp_c.read(counter = nrows)
 
 timeseries = np.array(data)
 
+# for i in timeseries:
+#     plt.plot(i)
+# plt.show()
+
 Y = np.zeros(nrows)
 
 
@@ -21,10 +25,12 @@ TestSet = np.delete(np.arange(len(Y)), TrainSet)
 XTest = timeseries[TestSet,:]
 YTest = Y[TestSet]
 sampleWeight = np.ones_like(YTrain)
-sampleWeight[YTrain==0] = 0.3
+sampleWeight[YTrain==0] = 1.0 # 0.3
+
+# exit()
 
 from tensorflow.keras.models import Sequential
-from tensorflow.keras.layers import Dense, Flatten
+from tensorflow.keras.layers import Dense, Flatten, Dropout 
 from tensorflow.keras.layers import Conv1D,MaxPooling1D
 from tensorflow.compat.v1.random import set_random_seed
 set_random_seed(42)
@@ -38,9 +44,11 @@ model.add(MaxPooling1D(pool_size=4))
 model.add(Conv1D(1, kernel_size=4, activation='relu', use_bias=False))
 model.add(MaxPooling1D(pool_size=4))
 model.add(Flatten())
+model.add(Dropout(0.5))
 model.add(Dense(1, activation='sigmoid'))
 model.compile(optimizer='adam', loss='binary_crossentropy', metrics=['accuracy'])
-history = model.fit(XTrain, YTrain, epochs=30, verbose=True, sample_weight=sampleWeight)
+# history = model.fit(XTrain, YTrain, epochs=100, verbose=True, sample_weight=sampleWeight)
+history = model.fit(XTrain, YTrain, epochs=100, verbose=True)
 model.summary()
 print(model.evaluate(XTest, YTest, verbose=False))
 plt.figure()

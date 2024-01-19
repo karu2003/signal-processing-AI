@@ -10,13 +10,15 @@ data = rp_c.read(counter = nrows)
 
 timeseries = np.array(data)
 
+model = keras.models.load_model("model_500.keras")
+seq_predictions=model.predict(timeseries)
+print(seq_predictions)
+
 for i in timeseries:
     plt.plot(i)
 plt.show()
 
-model = keras.models.load_model("model_500.keras")
-seq_predictions=model.predict(timeseries)
-print(seq_predictions)
+
 
 # print(seq_predictions >= 0.5).astype(int)
 

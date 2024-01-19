@@ -4,6 +4,7 @@ numpy
 # typing-extensions
 scipy
 matplotlib
+scikit-image
 # PyWavelets
 # scaleogram
 # line_profiler
