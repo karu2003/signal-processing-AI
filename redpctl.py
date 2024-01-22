@@ -1,5 +1,6 @@
 import redpitaya_scpi as scpi
 import numpy as np
+import time
 
 class RedCtl:
     """RedPitaya ctrl class
@@ -22,9 +23,10 @@ class RedCtl:
 
     def read(self, quantity = 800, counter = 50):
 
-        # data = np.empty(shape = quantity)
+        self.data.clear()
 
         self.rp_s.tx_txt('ACQ:START')
+        time.sleep(0.05)
         self.rp_s.tx_txt('ACQ:TRIG CH1_PE')
 
         for i in range(counter):
@@ -49,4 +51,13 @@ class RedCtl:
 
             # data = np.append(data,np.array(buff))
 
-        return self.data   
+        return self.data
+
+    def set_gen(self, wave_form = "square", freq = 500000, ampl = 0.5):
+        # wave_form "sine" "square"
+        self.rp_s.tx_txt('GEN:RST')
+        self.rp_s.sour_set(1, wave_form, ampl, freq)
+        self.rp_s.tx_txt('OUTPUT1:STATE ON')
+        self.rp_s.tx_txt('SOUR1:TRIG:INT')
+        # self.rp_s.close()
+ 

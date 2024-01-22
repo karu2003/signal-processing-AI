@@ -4,11 +4,12 @@ import redpctl as redpctl
 import keras
 
 
-rp_c = redpctl.RedCtl()
-nrows = 1
-data = rp_c.read(counter = nrows)
+# rp_c = redpctl.RedCtl()
+# nrows = 1
+# data = rp_c.read(counter = nrows)
+# timeseries = np.array(data)
 
-timeseries = np.array(data)
+timeseries = np.genfromtxt("sine.csv", delimiter=',')
 
 # min_val = np.min(timeseries)
 # max_val = np.max(timeseries)

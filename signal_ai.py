@@ -63,11 +63,13 @@ timeseries = np.array(data)
 
 for i in timeseries:
     # plt.plot(i)
-    spectrogram = tf.signal.stft(i, frame_length=int(len(i)/2), frame_step=1)
+    spectrogram = tf.signal.stft(i, frame_length=160, frame_step=5)
     spectrogram = tf.abs(spectrogram)
-    # spectrogram = spectrogram[..., tf.newaxis]
-    plt.plot(spectrogram)
-    # plt.imshow(spectrogram)
+    print(spectrogram)
+    spectrogram = spectrogram[..., tf.newaxis]
+    print(spectrogram)
+    # plt.plot(spectrogram)
+    plt.imshow(spectrogram)
     plt.show()
     # print(spectrogram)
 
