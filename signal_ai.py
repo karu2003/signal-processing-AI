@@ -61,17 +61,16 @@ timeseries = np.array(data)
 # layer = keras.layers.LayerNormalization()
 # timeseries = layer(timeseries)
 
+frame_step = 2
+frame_length = int(timeseries.shape[1]/frame_step)
+
 for i in timeseries:
-    # plt.plot(i)
-    spectrogram = tf.signal.stft(i, frame_length=160, frame_step=5)
+    spectrogram = tf.signal.stft(i, frame_length=frame_length, frame_step=frame_step)
     spectrogram = tf.abs(spectrogram)
-    print(spectrogram)
     spectrogram = spectrogram[..., tf.newaxis]
-    print(spectrogram)
-    # plt.plot(spectrogram)
+    spectrogram = spectrogram [:, :25]
     plt.imshow(spectrogram)
     plt.show()
-    # print(spectrogram)
 
 exit()
 # plt.show()
