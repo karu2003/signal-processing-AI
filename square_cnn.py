@@ -9,7 +9,7 @@ import tensorflow as tf
 BATCH_SIZE = 64
 SHUFFLE_BUFFER_SIZE = BATCH_SIZE * 2
 
-epochs = 100
+epochs = 500
 
 timeseries = np.genfromtxt("square.csv", delimiter=',')
 nrows = len(timeseries)
@@ -21,7 +21,6 @@ Y[yTrue] = 0
 # timeseries_mean = np.mean(timeseries)
 t_max = np.max(timeseries)
 t_min = np.min(timeseries)
-print(t_max,t_min)
 
 for i in yTrue:
     data = np.random.normal(0, 1, size=len(timeseries[i]))
@@ -62,8 +61,8 @@ YTrain = Y[TrainSet]
 TestSet = np.delete(np.arange(len(Y)), TrainSet)
 XTest = timeseries[TestSet,:]
 YTest = Y[TestSet]
-sampleWeight = np.ones_like(YTrain)
-sampleWeight[YTrain==1] = 0.3
+# sampleWeight = np.ones_like(YTrain)
+# sampleWeight[YTrain==1] = 0.3
 
 # exit()
 
@@ -74,13 +73,13 @@ from tensorflow.compat.v1.random import set_random_seed
 set_random_seed(42)
 
 model = Sequential()
-model.add(Conv1D(400, kernel_size=10, activation='relu', use_bias=False,
+model.add(Conv1D(8, kernel_size=10, activation='relu', use_bias=False,
                 input_shape=(timeseries.shape[1],1)))
-# model.add(MaxPooling1D(pool_size=4))
-# model.add(Conv1D(6, kernel_size=8, activation='relu', use_bias=False))
-# model.add(MaxPooling1D(pool_size=4))
-# model.add(Conv1D(1, kernel_size=4, activation='relu', use_bias=False))
-# model.add(MaxPooling1D(pool_size=4))
+model.add(MaxPooling1D(pool_size=4))
+model.add(Conv1D(6, kernel_size=8, activation='relu', use_bias=False))
+model.add(MaxPooling1D(pool_size=4))
+model.add(Conv1D(1, kernel_size=4, activation='relu', use_bias=False))
+model.add(MaxPooling1D(pool_size=4))
 model.add(Flatten())
 # model.add(Dropout(0.5))
 model.add(Dense(1, activation='sigmoid'))
@@ -88,8 +87,8 @@ dot_img_file = 'model_1.png'
 keras.utils.plot_model(model, to_file=dot_img_file, show_shapes=True)
 # keras.utils.plot_model(model, show_shapes=True)
 model.compile(optimizer='adam', loss='binary_crossentropy', metrics=['accuracy'])
-history = model.fit(XTrain, YTrain, epochs=100, verbose=True, sample_weight=sampleWeight)
-# history = model.fit(XTrain, YTrain, epochs=epochs, verbose=True)
+# history = model.fit(XTrain, YTrain, epochs=epochs, verbose=True, sample_weight=sampleWeight)
+history = model.fit(XTrain, YTrain, epochs=epochs, verbose=True)
 model.summary()
 print(model.evaluate(XTest, YTest, verbose=False))
 plt.figure()

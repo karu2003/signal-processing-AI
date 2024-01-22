@@ -15,10 +15,16 @@ timeseries = np.genfromtxt("sine.csv", delimiter=',')
 # max_val = np.max(timeseries)
 # timeseries = (timeseries - min_val) / (max_val - min_val)
 
-layer = keras.layers.LayerNormalization(axis=1)
-timeseries = layer(timeseries)
+# layer = keras.layers.LayerNormalization(axis=1)
+# timeseries = layer(timeseries)
 
 model = keras.models.load_model("model_500.keras")
+
+# for i in timeseries:
+#     seq_predictions=model.predict(timeseries[i])
+#     print(seq_predictions)
+#     plt.plot(i)
+
 seq_predictions=model.predict(timeseries)
 print(seq_predictions)
 
