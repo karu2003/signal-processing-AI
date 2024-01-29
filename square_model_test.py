@@ -46,14 +46,6 @@ print("Training input shape: ", x_train.shape)
 
 x_train_pred = model.predict(x_train)
 
-print(len(x_train_pred))
-for i in x_train_pred:
-    plt.plot(i)
-
-plt.show()
-
-exit()
-
 train_mae_loss = np.mean(np.abs(x_train_pred - x_train), axis=1)
 
 threshold = np.max(train_mae_loss)
@@ -78,8 +70,10 @@ for data_idx in range(TIME_STEPS - 1, len(df_test_value) - TIME_STEPS + 1):
     if np.all(anomalies[data_idx - TIME_STEPS + 1 : data_idx]):
         anomalous_data_indices.append(data_idx)
 
+
 df_subset = df_merged.iloc[anomalous_data_indices]
 fig, ax = plt.subplots()
 df_merged.plot(legend=False, ax=ax)
-df_subset.plot(legend=False, ax=ax, color="r")
+# df_subset.plot(legend=False, ax=ax, color="r")
+plt.plot(anomalies, color="r")
 plt.show()

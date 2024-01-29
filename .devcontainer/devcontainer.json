@@ -25,10 +25,14 @@
 			
 			// Add the IDs of extensions you want installed when the container is created.
 			"extensions": [
+				"L13RARY.l13-diff",
 				"ms-python.python",
 				"ms-python.vscode-pylance",
 				"ms-azuretools.vscode-docker",
-				"mechatroner.rainbow-csv"
+				"mechatroner.rainbow-csv",
+				"ms-toolsai.jupyter",
+				"ms-toolsai.jupyter-keymap",
+				"ms-python.black-formatter"
 			]
 		}
 	}

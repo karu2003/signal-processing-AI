@@ -7,7 +7,7 @@ from matplotlib import pyplot as plt
 import numpy as np
 import matplotlib.pyplot as plt
 import pandas as pd
- 
+
 df_square_one = pd.read_csv("dataset/square_one.csv", header=None)
 df_square = pd.read_csv("dataset/square.csv", header=None)
 df_sine = pd.read_csv("dataset/sine.csv", header=None)
@@ -43,6 +43,8 @@ print("Number of training samples:", len(df_training_value))
 # plt.show()
 
 TIME_STEPS = 248
+num_sensors = 1
+
 
 # Generated training sequences for use in sthe model.
 def create_sequences(values, time_steps=TIME_STEPS):
@@ -50,6 +52,7 @@ def create_sequences(values, time_steps=TIME_STEPS):
     for i in range(len(values) - time_steps + 1):
         output.append(values[i : (i + time_steps)])
     return np.stack(output)
+
 
 x_train = create_sequences(df_training_value.values)
 print("Training input shape: ", x_train.shape)
@@ -62,6 +65,9 @@ print("Training input shape: ", x_train.shape)
 model = keras.Sequential(
     [
         layers.Input(shape=(x_train.shape[1], x_train.shape[2])),
+        # layers.Reshape(
+        #     (TIME_STEPS, num_sensors), input_shape=(TIME_STEPS, num_sensors)
+        # ),
         layers.Conv1D(
             filters=32,
             kernel_size=7,
@@ -106,7 +112,7 @@ model.summary()
 history = model.fit(
     x_train,
     x_train,
-    epochs=100,
+    epochs=50,
     batch_size=128,
     validation_split=0.1,
     callbacks=[
@@ -154,7 +160,7 @@ This is the 288 timesteps from day 1 of our training dataset.
 ### Prepare test data
 """
 
-df_merged = pd.concat([df_square,df_sine],ignore_index=True, sort=False)
+df_merged = pd.concat([df_square, df_sine], ignore_index=True, sort=False)
 
 # df_test_value = (df_sine - training_mean) / training_std
 df_test_value = (df_merged - training_mean) / training_std
@@ -211,6 +217,4 @@ print("Training input shape: ", x_train.shape)
 reconstructed_model = keras.models.load_model("model_square.keras")
 
 # Let's check:
-np.testing.assert_allclose(
-    model.predict(x_train), reconstructed_model.predict(x_train)
-)
+np.testing.assert_allclose(model.predict(x_train), reconstructed_model.predict(x_train))
