@@ -94,7 +94,13 @@ class Plotter(object):
         # self.legend = pg.LegendItem((80,60), offset=(70,20))
         # self.legend.setParentItem(self.waveform.graphicsItem())
         # self.legend.addItem(self.qmw.vertical_layout , str(self.counter))
+        
+        font=QtGui.QFont()
+        font.setPixelSize(20)
+        font.setBold(True)
+        print(dir(font))
         self.text = pg.TextItem()
+        self.text.setFont(font)
         self.waveform.addItem(self.text)
 
         self.qmw.show()
