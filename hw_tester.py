@@ -5,14 +5,16 @@ import threading
 import time
 from queue import Full, Queue
 from random import randint
+import ping3
+ping3.EXCEPTIONS = True
 
 import matplotlib.pyplot as plt
 import numpy as np
 import pyqtgraph as pg
 
-# from PyQt5 import QtCore, QtWidgets
+from PyQt5 import QtCore #, QtWidgets
 from pyqtgraph import GraphicsLayoutWidget, PlotWidget, plot
-from pyqtgraph.Qt import QtGui, QtCore, QtWidgets
+from pyqtgraph.Qt import QtGui, QtWidgets #, QtCore
 from scipy import signal
 from scipy.fftpack import fft
 import redpctl as redpctl
@@ -23,12 +25,18 @@ pg.setConfigOption("background", "k")
 
 class Plotter(object):
     def __init__(self):
+        try:
+            ping3.ping("192.168.0.15", ttl=1)
+        except ping3.errors.TimeToLiveExpired as err:
+             print(err.ip_header["192.168.0.15"]) 
+
         self.comp_timeseries = np.genfromtxt(
             "dataset/square.csv", delimiter=","
         )  # signal for comparison
+        self.thresh = 0.2 
         self.q = Queue(maxsize=20)
         self.rx_buffer_size = 20000
-        self.rp_c = redpctl.RedCtl(dec=2)
+        self.rp_c = redpctl.RedCtl(dec=2, trig = self.thresh)
         # self.rp_c.set_gen(wave_form="square")
         self.rp_c.set_burst(wave_form="sine")
         self.nrows = 1
@@ -40,7 +48,7 @@ class Plotter(object):
         self.qmw.vertical_layout = QtWidgets.QVBoxLayout()
         self.qmw.setCentralWidget(self.qmw.central_widget)
         self.qmw.central_widget.setLayout(self.qmw.vertical_layout)
-        # self.qmw.showMaximized()
+        self.qmw.showMaximized()
         # self.qmw.showFullScreen()
 
         #### Add Plot
@@ -94,11 +102,12 @@ class Plotter(object):
         # self.legend = pg.LegendItem((80,60), offset=(70,20))
         # self.legend.setParentItem(self.waveform.graphicsItem())
         # self.legend.addItem(self.qmw.vertical_layout , str(self.counter))
+
+        # bargraph = pg.BarGraphItem(x = x, height = y1, width = 0.6, brush ='g')
         
         font=QtGui.QFont()
-        font.setPixelSize(20)
+        font.setPixelSize(20)  
         font.setBold(True)
-        print(dir(font))
         self.text = pg.TextItem()
         self.text.setFont(font)
         self.waveform.addItem(self.text)
@@ -124,19 +133,28 @@ class Plotter(object):
                             background-color: rgba(255, 255, 255, 70);
                             border-style: inset;
                         }"""
-
+        btn_size = (60,60)
         self.btn = QtWidgets.QPushButton("learning")
         self.btn.setStyleSheet(btn_Style)
+        self.btn.setMinimumSize(QtCore.QSize(int(btn_size[0]), int(btn_size[1])))
+        self.btn.setMaximumSize(QtCore.QSize(int(btn_size[0]), int(btn_size[1])))
+        # self.btn.resize(100,32)
+        # self.btn.move(50, 50)
         self.btn1 = QtWidgets.QPushButton("save graph")
         self.btn1.setStyleSheet(btn_Style)
+        # self.btn1.resize(100,32)
+        # self.btn1.move(50, 50)
+        self.btn1.setMinimumSize(QtCore.QSize(int(btn_size[0]), int(btn_size[1])))
+        self.btn1.setMaximumSize(QtCore.QSize(int(btn_size[0]), int(btn_size[1])))
+
         self.btn.clicked.connect(self.onButtonClicked)
         self.btn1.clicked.connect(self.onButtonClicked1)
         proxy = QtWidgets.QGraphicsProxyWidget()
         proxy1 = QtWidgets.QGraphicsProxyWidget()
         proxy.setWidget(self.btn)
         proxy1.setWidget(self.btn1)
-        self.win.addItem(proxy, row=3, col=1)
-        self.win.addItem(proxy1, row=0, col=1)
+        self.win.addItem(proxy, row=1, col=2)
+        self.win.addItem(proxy1, row=2, col=2)
         # self.waveform = self.win.addItem(proxy, row=0, col=0)
 
     def onButtonClicked(self):
@@ -145,7 +163,7 @@ class Plotter(object):
     def onButtonClicked1(self):
         print("Clicked1")
 
-    def x_edge(self, data, thresh=0.00):
+    def x_edge(self, data, thresh=0.2):
         mask1 = (data[:-1] < thresh) & (data[1:] > thresh)
         mask2 = (data[:-1] > thresh) & (data[1:] < thresh)
         rising_edge = np.flatnonzero(mask1) + 1
@@ -159,7 +177,7 @@ class Plotter(object):
             data = self.rp_c.read(counter=self.nrows, quantity=self.rx_buffer_size)
             timeseries = np.array(data)
 
-            rising_edge, falling_edge = self.x_edge(timeseries[0])
+            rising_edge, falling_edge = self.x_edge(timeseries[0], thresh = self.thresh)
             x_periods = []
 
             for i in timeseries:
@@ -189,11 +207,11 @@ class Plotter(object):
             )
 
         elif name == "comparison":
-            self.traces[name] = self.waveform.plot(pen=0.25, width=3)
+            self.traces[name] = self.waveform.plot(pen=0.5, width=3)
             self.waveform.setYRange(-1, 1, padding=0)
             self.waveform.setXRange(
                 0,
-                len(self.comp_timeseries),
+                400, #len(self.comp_timeseries),
                 padding=0.005,
             )
 
@@ -222,7 +240,7 @@ class Plotter(object):
                 data_x=self.x,
                 data_y=np.real(wf_data[0]),
             )
-            # all_results = None
+            all_results = None
             self.set_plotdata(
                 name="comparison",
                 data_x=self.x_com,

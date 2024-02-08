@@ -31,3 +31,5 @@ https://github.com/keras-team/keras-tuner
 
 https://github.com/keras-team/keras-io/tree/master/examples
 
+
+https://www.pythonguis.com/installation/install-qt-designer-standalone/

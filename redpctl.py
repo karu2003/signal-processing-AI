@@ -6,7 +6,7 @@ class RedCtl:
     """RedPitaya ctrl class
     parameters:
     """
-    def __init__(self, ip='192.168.0.15', trig = 0.0, dec = 1):
+    def __init__(self, ip='192.168.0.15', trig = 0.2, dec = 1):
 
         self.data = []
         self.ip = ip
@@ -61,7 +61,7 @@ class RedCtl:
         self.rp_s.tx_txt('SOUR1:TRIG:INT')
         # self.rp_s.close()
         
-    def set_burst(self, wave_form = "square", freq = 500000, ampl = 0.5, duration = 0.0001, period = 0.00025, nor = 65536):
+    def set_burst(self, wave_form = "square", freq = 500000, ampl = 1.0, duration = 0.001, period = 0.500, nor = 65536):
         # wave_form "sine" "square"
         self.rp_s.tx_txt('GEN:RST')
         period = int(period * 1000000)
