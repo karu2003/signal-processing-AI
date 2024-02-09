@@ -33,10 +33,10 @@ class Plotter(object):
         self.comp_timeseries = np.genfromtxt(
             "dataset/square.csv", delimiter=","
         )  # signal for comparison
-        self.thresh = 0.2 
+        self.thresh = 0.2
         self.q = Queue(maxsize=20)
-        self.rx_buffer_size = 20000
-        self.rp_c = redpctl.RedCtl(dec=2, trig = self.thresh)
+        self.rx_buffer_size = 16384
+        self.rp_c = redpctl.RedCtl(dec=1, trig = self.thresh)
         # self.rp_c.set_gen(wave_form="square")
         self.rp_c.set_burst(wave_form="sine")
         self.nrows = 1

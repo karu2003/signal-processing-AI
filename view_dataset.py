@@ -13,6 +13,8 @@ for i in timeseries_square:
 
 plt.show()
 
+exit()
+
 timeseries_sine = np.genfromtxt("dataset/sine.csv", delimiter=',')
 # timeseries_sine = np.loadtxt("sine.csv",delimiter=',',skiprows=0)
 # df2 = pd.read_csv(r"sine.csv",header=None) 

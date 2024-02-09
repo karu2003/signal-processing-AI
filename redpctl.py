@@ -73,4 +73,11 @@ class RedCtl:
         self.rp_s.tx_txt('SOUR1:TRIG:INT')
         time.sleep(2)
         self.rp_s.tx_txt('SOUR:TRIG:INT')
+    
+    def x_edge(self, data, thresh=0.2):
+        mask1 = (data[:-1] < thresh) & (data[1:] > thresh)
+        mask2 = (data[:-1] > thresh) & (data[1:] < thresh)
+        rising_edge = np.flatnonzero(mask1) + 1
+        falling_edge = np.flatnonzero(mask2) + 1
+        return rising_edge, falling_edge
  
