@@ -33,3 +33,5 @@ https://github.com/keras-team/keras-io/tree/master/examples
 
 
 https://www.pythonguis.com/installation/install-qt-designer-standalone/
+
+https://morioh.com/a/152c8d0fd4bd/anomaly-detection-in-time-series-with-python
